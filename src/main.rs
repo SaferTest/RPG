@@ -78,7 +78,7 @@ fn main() {
     }
 }
 
-fn target_lowest_hp(fighters: Vec<&mut fighter::Fighter>) -> Option<&mut fighter::Fighter>
+fn target_lowest_hp<'a>(fighters: Vec<&'a mut fighter::Fighter>) -> Option<&'a mut fighter::Fighter>
 {
     let mut lowest_hp = u32::MAX;
     let mut lowest_hp_fighter: Option<&mut fighter::Fighter> = None;
@@ -98,7 +98,7 @@ fn target_lowest_hp(fighters: Vec<&mut fighter::Fighter>) -> Option<&mut fighter
     lowest_hp_fighter
 }
 
-fn target_highest_hp(fighters: Vec<&mut fighter::Fighter>) -> Option<&mut fighter::Fighter>
+fn target_highest_hp<'a>(fighters: Vec<&'a mut fighter::Fighter>) -> Option<&'a mut fighter::Fighter>
 {
     let mut highest_hp = 0;
     let mut highest_hp_fighter: Option<&mut fighter::Fighter> = None;
