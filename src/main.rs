@@ -43,59 +43,47 @@ fn main() {
         println!("Turn {}", turn);
 
         if turn % 4 == 1 && hero.is_alive() {
-            if !thug_leader.is_alive() {
-                attack(&hero, &mut thug);
-            }
-            else if !thug.is_alive() {
-                attack(&hero, &mut thug_leader);
-            }
-            else if thug_leader.hp < thug.hp {
-                attack(&hero, &mut thug_leader);
+            let attacker: &Fighter = &hero;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut thug_leader, &mut thug];
+
+            if let Some(target) = target_lowest_hp(possible_targets) {
+                attack(attacker, target);
             }
             else {
-                attack(&hero, &mut thug);
+                break;
             }
         }
         else if turn % 4 == 2 && thug_leader.is_alive() {
-            if !hero.is_alive() {
-                attack(&thug_leader, &mut support);
-            }
-            else if !support.is_alive() {
-                attack(&thug_leader, &mut hero);
-            }
-            else if hero.hp < support.hp {
-                attack(&thug_leader, &mut hero);
+            let attacker: &Fighter = &thug_leader;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut hero, &mut support];
+
+            if let Some(target) = target_lowest_hp(possible_targets) {
+                attack(attacker, target);
             }
             else {
-                attack(&thug_leader, &mut support);
+                break;
             }
         }
         else if turn % 4 == 3 && support.is_alive() {
-            if !thug_leader.is_alive() {
-                attack(&support, &mut thug);
-            }
-            else if !thug.is_alive() {
-                attack(&support, &mut thug_leader);
-            }
-            else if thug_leader.hp > thug.hp {
-                attack(&support, &mut thug_leader);
+            let attacker: &Fighter = &support;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut thug_leader, &mut thug];
+
+            if let Some(target) = target_highest_hp(possible_targets) {
+                attack(attacker, target);
             }
             else {
-                attack(&support, &mut thug);
+                break;
             }
         }
         else if turn % 4 == 0 && thug.is_alive() {
-            if !hero.is_alive() {
-                attack(&thug, &mut support);
-            }
-            else if !support.is_alive() {
-                attack(&thug, &mut hero);
-            }
-            else if hero.hp > support.hp {
-                attack(&thug, &mut hero);
+            let attacker: &Fighter = &thug;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut hero, &mut support];
+
+            if let Some(target) = target_highest_hp(possible_targets) {
+                attack(attacker, target);
             }
             else {
-                attack(&thug, &mut support);
+                break;
             }
         }
 
@@ -103,6 +91,46 @@ fn main() {
 
         turn += 1;        
     }
+}
+
+fn target_lowest_hp(fighters: Vec<&mut Fighter>) -> Option<&mut Fighter>
+{
+    let mut lowest_hp = u32::MAX;
+    let mut lowest_hp_fighter: Option<&mut Fighter> = None;
+
+    for fighter in fighters {
+        if !fighter.is_alive()
+        {
+            continue;
+        }
+
+        if fighter.hp < lowest_hp {
+            lowest_hp = fighter.hp;
+            lowest_hp_fighter = Some(fighter);
+        }
+    }
+
+    lowest_hp_fighter
+}
+
+fn target_highest_hp(fighters: Vec<&mut Fighter>) -> Option<&mut Fighter>
+{
+    let mut highest_hp = 0;
+    let mut highest_hp_fighter: Option<&mut Fighter> = None;
+
+    for fighter in fighters {
+        if !fighter.is_alive()
+        {
+            continue;
+        }
+
+        if fighter.hp > highest_hp {
+            highest_hp = fighter.hp;
+            highest_hp_fighter = Some(fighter);
+        }
+    }
+
+    highest_hp_fighter
 }
 
 fn attack(attacker: &Fighter, defender: &mut Fighter) {
