@@ -1,4 +1,4 @@
-mod fighter;
+use crate::fighter;
 
 pub struct Party {
     pub members: Vec<fighter::Fighter>,

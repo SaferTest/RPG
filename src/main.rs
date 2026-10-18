@@ -1,7 +1,7 @@
-use crate::entities as entity;
+use entities;
 
-use entity::fighter::Fighter;
-use entity::party::Party;
+use entities::fighter::Fighter;
+use entities::party::Party;
 
 fn main() {
     let mut hero = Fighter {
