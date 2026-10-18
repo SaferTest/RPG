@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "rpg"
+name = "entities"
 version = "0.1.0"

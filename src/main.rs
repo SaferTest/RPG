@@ -1,35 +1,41 @@
-mod fighter;
+use crate::entities as entity;
+
+use entity::fighter::Fighter;
+use entity::party::Party;
 
 fn main() {
-    let mut hero = fighter::Fighter {
+    let mut hero = Fighter {
         name: String::from("Hero"),
         attack: 10,
         hp: 100,
     };
-    let mut support = fighter::Fighter {
+    let mut support = Fighter {
         name: String::from("Support"),
         attack: 8,
         hp: 120,
     };
-    let mut thug_leader = fighter::Fighter {
+    let mut thug_leader = Fighter {
         name: String::from("Thug Leader"),
         attack: 12,
         hp: 110,
     };
-    let mut thug = fighter::Fighter {
+    let mut thug = Fighter {
         name: String::from("Thug"),
         attack: 8,
         hp: 90,
     };
 
+    let hero_party = Party { members: vec![hero, support] };
+    let enemy_party = Party { members: vec![thug_leader, thug] };
+
     let mut turn: u32 = 1;
 
-    while (hero.is_alive() || support.is_alive()) && (thug_leader.is_alive() || thug.is_alive()) {
+    while hero_party.is_alive() && enemy_party.is_alive() {
         println!("Turn {}", turn);
 
         if turn % 4 == 1 && hero.is_alive() {
-            let attacker: &fighter::Fighter = &hero;
-            let possible_targets: Vec<&mut fighter::Fighter> = vec![&mut thug_leader, &mut thug];
+            let attacker: &Fighter = &hero;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut thug_leader, &mut thug];
 
             if let Some(target) = target_lowest_hp(possible_targets) {
                 attack(attacker, target);
@@ -39,8 +45,8 @@ fn main() {
             }
         }
         else if turn % 4 == 2 && thug_leader.is_alive() {
-            let attacker: &fighter::Fighter = &thug_leader;
-            let possible_targets: Vec<&mut fighter::Fighter> = vec![&mut hero, &mut support];
+            let attacker: &Fighter = &thug_leader;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut hero, &mut support];
 
             if let Some(target) = target_lowest_hp(possible_targets) {
                 attack(attacker, target);
@@ -50,8 +56,8 @@ fn main() {
             }
         }
         else if turn % 4 == 3 && support.is_alive() {
-            let attacker: &fighter::Fighter = &support;
-            let possible_targets: Vec<&mut fighter::Fighter> = vec![&mut thug_leader, &mut thug];
+            let attacker: &Fighter = &support;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut thug_leader, &mut thug];
 
             if let Some(target) = target_highest_hp(possible_targets) {
                 attack(attacker, target);
@@ -61,8 +67,8 @@ fn main() {
             }
         }
         else if turn % 4 == 0 && thug.is_alive() {
-            let attacker: &fighter::Fighter = &thug;
-            let possible_targets: Vec<&mut fighter::Fighter> = vec![&mut hero, &mut support];
+            let attacker: &Fighter = &thug;
+            let possible_targets: Vec<&mut Fighter> = vec![&mut hero, &mut support];
 
             if let Some(target) = target_highest_hp(possible_targets) {
                 attack(attacker, target);
@@ -78,10 +84,10 @@ fn main() {
     }
 }
 
-fn target_lowest_hp<'a>(fighters: Vec<&'a mut fighter::Fighter>) -> Option<&'a mut fighter::Fighter>
+fn target_lowest_hp<'a>(fighters: Vec<&'a mut Fighter>) -> Option<&'a mut Fighter>
 {
     let mut lowest_hp = u32::MAX;
-    let mut lowest_hp_fighter: Option<&mut fighter::Fighter> = None;
+    let mut lowest_hp_fighter: Option<&mut Fighter> = None;
 
     for fighter in fighters {
         if !fighter.is_alive()
@@ -98,10 +104,10 @@ fn target_lowest_hp<'a>(fighters: Vec<&'a mut fighter::Fighter>) -> Option<&'a m
     lowest_hp_fighter
 }
 
-fn target_highest_hp<'a>(fighters: Vec<&'a mut fighter::Fighter>) -> Option<&'a mut fighter::Fighter>
+fn target_highest_hp<'a>(fighters: Vec<&'a mut Fighter>) -> Option<&'a mut Fighter>
 {
     let mut highest_hp = 0;
-    let mut highest_hp_fighter: Option<&mut fighter::Fighter> = None;
+    let mut highest_hp_fighter: Option<&mut Fighter> = None;
 
     for fighter in fighters {
         if !fighter.is_alive()
@@ -118,7 +124,7 @@ fn target_highest_hp<'a>(fighters: Vec<&'a mut fighter::Fighter>) -> Option<&'a 
     highest_hp_fighter
 }
 
-fn attack(attacker: &fighter::Fighter, defender: &mut fighter::Fighter) {
+fn attack(attacker: &Fighter, defender: &mut Fighter) {
     println!("{} attacks {} for {} damage!", attacker.name, defender.name, attacker.attack);
 
     defender.take_damage(attacker.attack);
