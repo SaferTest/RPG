@@ -4,77 +4,89 @@ use entities::fighter::Fighter;
 use entities::party::Party;
 
 fn main() {
-    let mut hero = Fighter {
+    let hero = Fighter {
         name: String::from("Hero"),
         attack: 10,
         hp: 100,
     };
-    let mut support = Fighter {
+    let support = Fighter {
         name: String::from("Support"),
         attack: 8,
         hp: 120,
     };
-    let mut thug_leader = Fighter {
+    let thug_leader = Fighter {
         name: String::from("Thug Leader"),
         attack: 12,
         hp: 110,
     };
-    let mut thug = Fighter {
+    let thug = Fighter {
         name: String::from("Thug"),
         attack: 8,
         hp: 90,
     };
 
-    let hero_party = Party { members: vec![hero, support] };
-    let enemy_party = Party { members: vec![thug_leader, thug] };
+    let mut hero_party = Party { members: vec![hero, support] };
+    let mut enemy_party = Party { members: vec![thug_leader, thug] };
 
     let mut turn: u32 = 1;
 
     while hero_party.is_alive() && enemy_party.is_alive() {
         println!("Turn {}", turn);
 
-        if turn % 4 == 1 && hero.is_alive() {
-            let attacker: &Fighter = &hero;
-            let possible_targets: Vec<&mut Fighter> = vec![&mut thug_leader, &mut thug];
+        if turn % 4 == 1 {
+            let attacker: &Fighter = &hero_party.members[0];
 
-            if let Some(target) = target_lowest_hp(possible_targets) {
-                attack(attacker, target);
-            }
-            else {
-                break;
+            if attacker.is_alive() {
+                let possible_targets: Vec<&mut Fighter> = enemy_party.members.iter_mut().collect();
+
+                if let Some(target) = target_lowest_hp(possible_targets) {
+                    attack(attacker, target);
+                }
+                else {
+                    break;
+                }
             }
         }
-        else if turn % 4 == 2 && thug_leader.is_alive() {
-            let attacker: &Fighter = &thug_leader;
-            let possible_targets: Vec<&mut Fighter> = vec![&mut hero, &mut support];
+        else if turn % 4 == 2 {
+            let attacker: &Fighter = &enemy_party.members[0];
 
-            if let Some(target) = target_lowest_hp(possible_targets) {
-                attack(attacker, target);
-            }
-            else {
-                break;
+            if attacker.is_alive() {
+                let possible_targets: Vec<&mut Fighter> = hero_party.members.iter_mut().collect();
+
+                if let Some(target) = target_lowest_hp(possible_targets) {
+                    attack(attacker, target);
+                }
+                else {
+                    break;
+                }
             }
         }
-        else if turn % 4 == 3 && support.is_alive() {
-            let attacker: &Fighter = &support;
-            let possible_targets: Vec<&mut Fighter> = vec![&mut thug_leader, &mut thug];
+        else if turn % 4 == 3 {
+            let attacker: &Fighter = &hero_party.members[1];
 
-            if let Some(target) = target_highest_hp(possible_targets) {
-                attack(attacker, target);
-            }
-            else {
-                break;
+            if attacker.is_alive() {
+                let possible_targets: Vec<&mut Fighter> = enemy_party.members.iter_mut().collect();
+
+                if let Some(target) = target_highest_hp(possible_targets) {
+                    attack(attacker, target);
+                }
+                else {
+                    break;
+                }
             }
         }
-        else if turn % 4 == 0 && thug.is_alive() {
-            let attacker: &Fighter = &thug;
-            let possible_targets: Vec<&mut Fighter> = vec![&mut hero, &mut support];
+        else if turn % 4 == 0 {
+            let attacker: &Fighter = &enemy_party.members[1];
 
-            if let Some(target) = target_highest_hp(possible_targets) {
-                attack(attacker, target);
-            }
-            else {
-                break;
+            if attacker.is_alive() {
+                let possible_targets: Vec<&mut Fighter> = hero_party.members.iter_mut().collect();
+
+                if let Some(target) = target_highest_hp(possible_targets) {
+                    attack(attacker, target);
+                }
+                else {
+                    break;
+                }
             }
         }
 
