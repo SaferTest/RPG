@@ -96,44 +96,24 @@ fn main() {
     }
 }
 
+/*
+    TODO: refactor targetting functions to:
+        - return a usize instead of a fighter
+        - use closures to determine target
+        - rethink borrowing/ownership
+ */
 fn target_lowest_hp<'a>(fighters: Vec<&'a mut Fighter>) -> Option<&'a mut Fighter>
 {
-    let mut lowest_hp = u32::MAX;
-    let mut lowest_hp_fighter: Option<&mut Fighter> = None;
-
-    for fighter in fighters {
-        if !fighter.is_alive()
-        {
-            continue;
-        }
-
-        if fighter.hp < lowest_hp {
-            lowest_hp = fighter.hp;
-            lowest_hp_fighter = Some(fighter);
-        }
-    }
-
-    lowest_hp_fighter
+    fighters.into_iter()
+        .filter(|f| f.is_alive())
+        .min_by_key(|f| f.hp)
 }
 
 fn target_highest_hp<'a>(fighters: Vec<&'a mut Fighter>) -> Option<&'a mut Fighter>
 {
-    let mut highest_hp = 0;
-    let mut highest_hp_fighter: Option<&mut Fighter> = None;
-
-    for fighter in fighters {
-        if !fighter.is_alive()
-        {
-            continue;
-        }
-
-        if fighter.hp > highest_hp {
-            highest_hp = fighter.hp;
-            highest_hp_fighter = Some(fighter);
-        }
-    }
-
-    highest_hp_fighter
+    fighters.into_iter()
+        .filter(|f| f.is_alive())
+        .max_by_key(|f| f.hp)
 }
 
 fn attack(attacker: &Fighter, defender: &mut Fighter) {
