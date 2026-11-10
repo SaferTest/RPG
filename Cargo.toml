@@ -1,11 +1,12 @@
 [package]
 name = "rpg"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 
 [dependencies]
 entities = { path = "entities"}
+targeting = { path = "targeting"}
 
 [workspace]
-members = ["entities"]
+members = ["entities", "targeting"]
 resolver = "2"

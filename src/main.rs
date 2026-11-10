@@ -1,4 +1,5 @@
 use entities;
+use targeting;
 
 use entities::fighter::Fighter;
 use entities::party::Party;
@@ -39,7 +40,7 @@ fn main() {
             if attacker.is_alive() {
                 let possible_targets: Vec<&mut Fighter> = enemy_party.members.iter_mut().collect();
 
-                if let Some(target) = target_lowest_hp(possible_targets) {
+                if let Some(target) = targeting::target_lowest_hp(possible_targets) {
                     attack(attacker, target);
                 }
                 else {
@@ -53,7 +54,7 @@ fn main() {
             if attacker.is_alive() {
                 let possible_targets: Vec<&mut Fighter> = hero_party.members.iter_mut().collect();
 
-                if let Some(target) = target_lowest_hp(possible_targets) {
+                if let Some(target) = targeting::target_lowest_hp(possible_targets) {
                     attack(attacker, target);
                 }
                 else {
@@ -67,7 +68,7 @@ fn main() {
             if attacker.is_alive() {
                 let possible_targets: Vec<&mut Fighter> = enemy_party.members.iter_mut().collect();
 
-                if let Some(target) = target_highest_hp(possible_targets) {
+                if let Some(target) = targeting::target_highest_hp(possible_targets) {
                     attack(attacker, target);
                 }
                 else {
@@ -81,7 +82,7 @@ fn main() {
             if attacker.is_alive() {
                 let possible_targets: Vec<&mut Fighter> = hero_party.members.iter_mut().collect();
 
-                if let Some(target) = target_highest_hp(possible_targets) {
+                if let Some(target) = targeting::target_highest_hp(possible_targets) {
                     attack(attacker, target);
                 }
                 else {
@@ -94,26 +95,6 @@ fn main() {
 
         turn += 1;        
     }
-}
-
-/*
-    TODO: refactor targetting functions to:
-        - return a usize instead of a fighter
-        - use closures to determine target
-        - rethink borrowing/ownership
- */
-fn target_lowest_hp<'a>(fighters: Vec<&'a mut Fighter>) -> Option<&'a mut Fighter>
-{
-    fighters.into_iter()
-        .filter(|f| f.is_alive())
-        .min_by_key(|f| f.hp)
-}
-
-fn target_highest_hp<'a>(fighters: Vec<&'a mut Fighter>) -> Option<&'a mut Fighter>
-{
-    fighters.into_iter()
-        .filter(|f| f.is_alive())
-        .max_by_key(|f| f.hp)
 }
 
 fn attack(attacker: &Fighter, defender: &mut Fighter) {
