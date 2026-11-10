@@ -9,3 +9,65 @@ impl Party {
         self.members.iter().any(|member| member.is_alive())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn generate_test_party() -> Party {
+        Party {
+            members: vec![
+                fighter::Fighter {
+                    name: String::from("Member 1"),
+                    attack: 10,
+                    hp: 100,
+                },
+                fighter::Fighter {
+                    name: String::from("Member 2"),
+                    attack: 10,
+                    hp: 100,
+                },
+                fighter::Fighter {
+                    name: String::from("Member 3"),
+                    attack: 10,
+                    hp: 100,
+                }
+            ]
+        }
+    }
+
+    #[test]
+    fn test_is_alive_everyone_alive_returns_true() {
+        let party = generate_test_party();
+
+        assert!(party.is_alive());
+    }
+
+    #[test]
+    fn test_is_alive_some_dead_returns_true() {
+        let mut party = generate_test_party();
+
+        let to_defeat = &mut party.members[0];
+
+        to_defeat.take_damage(to_defeat.hp);
+
+        assert!(party.is_alive());
+        
+        let to_defeat = &mut party.members[1];
+
+        to_defeat.take_damage(to_defeat.hp);
+
+        assert!(party.is_alive());
+    }
+
+    #[test]
+    fn test_is_alive_everyone_dead_returns_false() {
+        let mut party = generate_test_party();
+
+        for to_defeat in party.members.iter_mut() {
+            to_defeat.take_damage(to_defeat.hp);
+        }
+
+        assert!(!party.is_alive());
+    }
+}
