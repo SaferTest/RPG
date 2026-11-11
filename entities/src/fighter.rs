@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Fighter {
     pub name: String,
     pub attack: u32,

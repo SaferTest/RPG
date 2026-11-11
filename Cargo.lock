@@ -12,10 +12,18 @@ version = "0.1.2"
 dependencies = [
  "entities",
  "targeting",
+ "turn_order",
 ]
 
 [[package]]
 name = "targeting"
+version = "0.1.0"
+dependencies = [
+ "entities",
+]
+
+[[package]]
+name = "turn_order"
 version = "0.1.0"
 dependencies = [
  "entities",

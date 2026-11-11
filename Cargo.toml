@@ -6,7 +6,8 @@ edition = "2024"
 [dependencies]
 entities = { path = "entities"}
 targeting = { path = "targeting"}
+turn_order = { path = "turn_order"}
 
 [workspace]
-members = ["entities", "targeting"]
+members = ["entities", "targeting", "turn_order"]
 resolver = "2"

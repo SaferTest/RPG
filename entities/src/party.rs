@@ -4,6 +4,7 @@ pub struct Party {
     pub members: Vec<fighter::Fighter>,
 }
 
+// TODO: enforce at least 1 member at all times
 impl Party {
     pub fn is_alive(&self) -> bool {
         self.members.iter().any(|member| member.is_alive())
