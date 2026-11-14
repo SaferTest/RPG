@@ -1,13 +1,49 @@
 use crate::fighter;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Alignment {
+    Ally,
+    Opponent,
+}
+
+pub struct MemberSynopsis {
+    amount: usize,
+    alignment: Alignment,
+}
+
+impl MemberSynopsis {
+    pub fn amount(&self) -> usize {
+        self.amount
+    }
+
+    pub fn alignment(&self) -> Alignment {
+        self.alignment.clone()
+    }
+}
+
 pub struct Party {
     pub members: Vec<fighter::Fighter>,
+    pub alignment: Alignment,
 }
 
 // TODO: enforce at least 1 member at all times
 impl Party {
+    pub fn new(members: Vec<fighter::Fighter>, alignment: Alignment) -> Self {
+        Party {
+            members,
+            alignment,
+        }
+    }
+
     pub fn is_alive(&self) -> bool {
         self.members.iter().any(|member| member.is_alive())
+    }
+
+    pub fn get_member_synopsis(&self) -> MemberSynopsis {
+        MemberSynopsis {
+            amount: self.members.len(),
+            alignment: self.alignment.clone(),
+        }
     }
 }
 
@@ -16,8 +52,8 @@ mod tests {
     use super::*;
 
     fn generate_test_party() -> Party {
-        Party {
-            members: vec![
+        Party::new(
+            vec![
                 fighter::Fighter {
                     name: String::from("Member 1"),
                     attack: 10,
@@ -33,8 +69,9 @@ mod tests {
                     attack: 10,
                     hp: 100,
                 }
-            ]
-        }
+            ],
+            Alignment::Ally,
+        )
     }
 
     #[test]

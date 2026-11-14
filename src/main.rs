@@ -2,7 +2,7 @@ use entities;
 use targeting;
 
 use entities::fighter::Fighter;
-use entities::party::Party;
+use entities::party::{Party, Alignment};
 
 fn main() {
     let hero = Fighter {
@@ -26,8 +26,8 @@ fn main() {
         hp: 90,
     };
 
-    let mut hero_party = Party { members: vec![hero, support] };
-    let mut enemy_party = Party { members: vec![thug_leader, thug] };
+    let mut hero_party = Party::new(vec![hero, support], Alignment::Ally);
+    let mut enemy_party = Party::new(vec![thug_leader, thug], Alignment::Opponent);
 
     let mut turn: u32 = 1;
 
