@@ -21,14 +21,14 @@ impl TurnOrder {
 
         for i in 0..max_len {
             if i < synopsis_1.amount() {
-                if (synopsis_1.alignment() == Alignment::Ally) {
+                if synopsis_1.alignment() == Alignment::Ally {
                     order.push(TurnOrderEntity::Ally(i));
                 } else {
                     order.push(TurnOrderEntity::Opponent(i));
                 }
             }
             if i < synopsis_2.amount() {
-                if (synopsis_2.alignment() == Alignment::Ally) {
+                if synopsis_2.alignment() == Alignment::Ally {
                     order.push(TurnOrderEntity::Ally(i));
                 } else {
                     order.push(TurnOrderEntity::Opponent(i));
@@ -66,7 +66,7 @@ impl TurnOrder {
             self.order.remove(i);
             
             if self.current_index >= i {
-                if (self.current_index == 0) {
+                if self.current_index == 0 {
                     self.current_index = self.order.len() - 1;
                 } else {
                     self.current_index -= 1;

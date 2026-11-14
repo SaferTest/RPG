@@ -1,8 +1,10 @@
 use entities;
 use targeting;
+use turn_order;
 
 use entities::fighter::Fighter;
 use entities::party::{Party, Alignment};
+use turn_order::{TurnOrder, TurnOrderEntity};
 
 fn main() {
     let hero = Fighter {
@@ -29,71 +31,77 @@ fn main() {
     let mut hero_party = Party::new(vec![hero, support], Alignment::Ally);
     let mut enemy_party = Party::new(vec![thug_leader, thug], Alignment::Opponent);
 
+    let mut order = TurnOrder::new(&hero_party.get_member_synopsis(), &enemy_party.get_member_synopsis());
+
     let mut turn: u32 = 1;
-
+    
     while hero_party.is_alive() && enemy_party.is_alive() {
-        println!("Turn {}", turn);
+        let attacker_index = order.get_current_fighter();
 
-        if turn % 4 == 1 {
-            let attacker: &Fighter = &hero_party.members[0];
+        match attacker_index {
+            TurnOrderEntity::Ally(i) => {
+                let attacker = &hero_party.members[i];
 
-            if attacker.is_alive() {
+                if !attacker.is_alive() {
+                    order.remove_fighter(i, Alignment::Ally);
+                    order.advance_turn();
+                    continue;
+                }
+
+                println!("Turn {}: {}'s turn. ", turn, attacker.name);
+
                 let possible_targets: Vec<&mut Fighter> = enemy_party.members.iter_mut().collect();
 
-                if let Some(target) = targeting::target_lowest_hp(possible_targets) {
+                let target = if i == 0 {
+                    targeting::target_lowest_hp(possible_targets)
+                } else {
+                    targeting::target_highest_hp(possible_targets)
+                };
+
+                if let Some(target) = target {
                     attack(attacker, target);
                 }
                 else {
                     break;
                 }
-            }
-        }
-        else if turn % 4 == 2 {
-            let attacker: &Fighter = &enemy_party.members[0];
 
-            if attacker.is_alive() {
+                println!();
+
+                order.advance_turn();
+                turn += 1;
+            },
+            TurnOrderEntity::Opponent(i) => {
+                let attacker = &enemy_party.members[i];
+
+                if !attacker.is_alive() {
+                    order.remove_fighter(i, Alignment::Opponent);
+                    order.advance_turn();
+                    continue;
+                }
+
+                println!("Turn {}: {}'s turn. ", turn, attacker.name);
+
                 let possible_targets: Vec<&mut Fighter> = hero_party.members.iter_mut().collect();
 
-                if let Some(target) = targeting::target_lowest_hp(possible_targets) {
+                let target = if i == 0 {
+                    targeting::target_lowest_hp(possible_targets)
+                } else {
+                    targeting::target_highest_hp(possible_targets)
+                };
+
+                if let Some(target) = target {
                     attack(attacker, target);
                 }
                 else {
                     break;
                 }
-            }
-        }
-        else if turn % 4 == 3 {
-            let attacker: &Fighter = &hero_party.members[1];
 
-            if attacker.is_alive() {
-                let possible_targets: Vec<&mut Fighter> = enemy_party.members.iter_mut().collect();
+                println!();
 
-                if let Some(target) = targeting::target_highest_hp(possible_targets) {
-                    attack(attacker, target);
-                }
-                else {
-                    break;
-                }
-            }
-        }
-        else if turn % 4 == 0 {
-            let attacker: &Fighter = &enemy_party.members[1];
-
-            if attacker.is_alive() {
-                let possible_targets: Vec<&mut Fighter> = hero_party.members.iter_mut().collect();
-
-                if let Some(target) = targeting::target_highest_hp(possible_targets) {
-                    attack(attacker, target);
-                }
-                else {
-                    break;
-                }
-            }
-        }
-
-        println!();
-
-        turn += 1;        
+                order.advance_turn();
+                turn += 1;
+            },
+        }     
     }
 }
 
